@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  logger:
+    build: .
+    container_name: golang-logger
+    volumes:
+      - ./logs:/var/log/app
+    ports:
+      - "8080:8080"
+
+  loki:
+    image: grafana/loki:2.9.0
+    container_name: loki
+    volumes:
+      - ./loki-config.yml:/etc/loki/loki-config.yml
+    ports:
+      - "3100:3100"
+    restart: always
+    
+  promtail:
+    image: grafana/promtail:2.9.0
+    container_name: promtail
+    volumes:
+      - ./logs:/var/log/app
+      - ./promtail-config.yml:/etc/promtail/config.yaml
+
+  grafana:
+    image: grafana/grafana:latest
+    container_name: grafana
+    ports:
+      - "3000:3000"
